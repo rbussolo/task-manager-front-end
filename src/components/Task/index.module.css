@@ -1,0 +1,87 @@
+.container {
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1rem;
+
+  max-width: 1240px;
+
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.filterContainer {
+  background-color: white;
+  border: 1px solid #ededed;
+  border-radius: 8px;
+
+  padding: 2rem;
+
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+}
+
+.taskContainer {
+  background-color: white;
+  border: 1px solid #ededed;
+  border-radius: 8px;
+
+  padding: 2rem;
+
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+
+  margin-top: 2rem;
+}
+
+.taskOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.taskCount {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.taskCount span {
+  padding: 0.5rem;
+  background-color: #ededed;
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+}
+
+.taskList {
+
+}
+
+.taskCompleted td{
+  text-decoration: line-through;
+}
+
+.taskPriorityLower {
+  background-color: var(--priority-bg-lower);
+}
+
+.taskPriorityMedium {
+  background-color: var(--priority-bg-medium);
+}
+
+.taskPriorityHigh {
+  background-color: var(--priority-bg-high);
+}
+
+.taskActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.taskActionButton {
+  min-width: none;
+}
