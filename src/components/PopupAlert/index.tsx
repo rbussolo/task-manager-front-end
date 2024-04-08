@@ -11,8 +11,10 @@ const style = {
   boxShadow: 12,
 };
 
+export type PopupAlertType = "success" | "info" | "warning" | "error";
+
 interface PopupAlertProps {
-  type: "success" | "info" | "warning" | "error";
+  type: PopupAlertType;
   message: string;
   isOpen: boolean;
   onClose: () => void;

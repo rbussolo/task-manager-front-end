@@ -3,12 +3,12 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { categoryList } from '../../utils/CategoryList';
+import { categoryList } from '../../../utils/CategoryList';
 import { DatePicker } from '@mui/x-date-pickers';
-import { api } from '../../services/api';
-import PopupAlert from '../PopupAlert';
-import { TaskPriority } from '../../utils/TaskPriority';
-import Loading from '../Loading';
+import { api } from '../../../services/api';
+import PopupAlert, { PopupAlertType } from '../../PopupAlert';
+import { TaskPriority } from '../../../utils/TaskPriority';
+import Loading from '../../Loading';
 
 const style = {
   position: 'absolute',
@@ -22,7 +22,7 @@ const style = {
   p: 4,
 };
 
-interface NewTaskProps {
+interface PopupTaskProps {
   taskId?: number;
   isOpen: boolean;
   onClose: () => void;
@@ -36,7 +36,7 @@ interface ITask {
   dueDate: Date | null;
 }
 
-export default function NewTask({ taskId, isOpen, onClose }: NewTaskProps) {
+export default function PopupTask({ taskId, isOpen, onClose }: PopupTaskProps) {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [priority, setPriority] = useState<TaskPriority>(TaskPriority.Lower);
@@ -45,7 +45,7 @@ export default function NewTask({ taskId, isOpen, onClose }: NewTaskProps) {
 
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState<"error" | "info" | "success" | "warning">("success");
+  const [alertType, setAlertType] = useState<PopupAlertType>("success");
   const [alertCloseOnExit, setAlertCloseOnExit] = useState(false);
   
   const [isLoading, setIsLoading] = useState(false);
@@ -81,13 +81,17 @@ export default function NewTask({ taskId, isOpen, onClose }: NewTaskProps) {
     }).catch(error => {
       const errorMessage = error.response?.data?.message ? error.response.data.message : "Ocorreu um erro no de comunicação, favor tente novamente mais tarde!";
       
-      setAlertCloseOnExit(true);
-      setAlertType("error");
-      setAlertMessage(errorMessage);
-      setAlertOpen(true);
+      showAlert("error", errorMessage, true);
     }).finally(() => {
       setIsLoading(false);
     });
+  }
+
+  function showAlert(type: PopupAlertType, message: string, closeOnExit = false) {
+    setAlertCloseOnExit(closeOnExit);
+    setAlertType(type);
+    setAlertMessage(message);
+    setAlertOpen(true);
   }
 
   const handleCloseAlert = () => {
@@ -109,29 +113,16 @@ export default function NewTask({ taskId, isOpen, onClose }: NewTaskProps) {
       dueDate
     }
 
-    if (taskId && taskId > 0) {
-      api.patch(`/task/${taskId}`, task).then(() => {
-        setAlertType("success");
-        setAlertMessage("Tarefa criada com Sucesso!");
-        setAlertOpen(true);
-      }).catch((error) => {
-        setAlertCloseOnExit(true);
-        setAlertType("error");
-        setAlertMessage(error.response.data.message);
-        setAlertOpen(true);
-      });
-    } else {
-      api.post('/task', task).then(() => {
-        setAlertType("success");
-        setAlertMessage("Tarefa criada com Sucesso!");
-        setAlertOpen(true);
-      }).catch((error) => {
-        setAlertCloseOnExit(false);
-        setAlertType("error");
-        setAlertMessage(error.response.data.message);
-        setAlertOpen(true);
-      });
-    }
+    const isEditing = taskId && taskId > 0 ? true : false;
+    const response = isEditing ? api.patch(`/task/${taskId}`, task) : api.post('/task', task);
+
+    response.then(() => {
+      showAlert("success", "Operação realizado com sucesso!", true);
+    }).catch((error) => {
+      const errorMessage = error.response?.data?.message ? error.response.data.message : "Ocorreu um erro no de comunicação, favor tente novamente mais tarde!";
+      
+      showAlert("error", errorMessage);
+    });
   }
 
   return (

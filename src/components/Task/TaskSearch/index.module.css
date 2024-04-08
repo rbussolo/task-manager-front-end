@@ -1,0 +1,18 @@
+.filterContainer {
+  background-color: white;
+  border: 1px solid #ededed;
+  border-radius: 8px;
+
+  padding: 2rem;
+
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filterHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
