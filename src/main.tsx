@@ -5,12 +5,18 @@ import ptBR from 'date-fns/locale/pt-BR';
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
-import App from './App'
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthProvider';
+import { RoutesApp } from './routes';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-      <App />
+      <BrowserRouter>
+        <AuthProvider>
+          <RoutesApp />
+        </AuthProvider>
+      </BrowserRouter>
     </LocalizationProvider>
   </React.StrictMode>,
 )

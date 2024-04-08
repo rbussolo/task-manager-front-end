@@ -6,9 +6,10 @@ import { useEffect, useState } from 'react';
 import { categoryList } from '../../../utils/CategoryList';
 import { DatePicker } from '@mui/x-date-pickers';
 import { api } from '../../../services/api';
-import PopupAlert, { PopupAlertType } from '../../PopupAlert';
+
 import { TaskPriority } from '../../../utils/TaskPriority';
-import Loading from '../../Loading';
+import PopupAlert, { PopupAlertType } from '../../../components/PopupAlert';
+import Loading from '../../../components/Loading';
 
 const style = {
   position: 'absolute',
