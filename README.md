@@ -1,30 +1,29 @@
-# React + TypeScript + Vite
+## Task Manager - Front-end
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto de Gerenciamento de Tarefas por Usuário
 
-Currently, two official plugins are available:
+### Configuração
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Para configurar o front-end, necessário verificar o arquivo /src/services/api.ts, dentro dele tem a URL base de onde vai rodar a aplicação:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```
+const BASE_URL = "http://localhost:3000/api/";
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Caso o back-end esteja em outro local, é necessário mudar esta configuração.
+
+### Instalação
+
+1. Primeiro instalar as dependencias
+
+```
+npm install
+```
+
+2. Agora startar a aplicação
+
+```
+npm run dev
+```
+
+Caso for utilizar a imagem docker, basta realizar a configuração antes da BASE_URL.
