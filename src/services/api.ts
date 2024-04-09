@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getUserLocalStorage } from '../contexts/AuthProvider/util';
 
-const BASE_URL = "http://localhost:3000/api/";
+const BASE_URL = process.env.BACKEND_BASE_URL;
 
 export const api = axios.create({
   baseURL: BASE_URL,
