@@ -29,3 +29,7 @@ npm run dev
 ```
 
 Caso for utilizar a imagem docker, basta realizar a configuração antes da BASE_URL.
+
+### Utilização
+
+Para logar, inicialmente basta colocar o login / senha e será criado o usuário automaticamente.
