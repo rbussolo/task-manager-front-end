@@ -15,17 +15,17 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 import { useAuth } from '../../contexts/AuthProvider/useAuth'
 import { convertErrorToString } from '../../utils/error-to-toast'
-import { Checkbox } from '@/components/ui/checkbox'
 
 const signInForm = z.object({
   email: z.string().email(),
   password: z.string(),
-  rememberMe: z.boolean().default(false)
+  rememberMe: z.boolean().default(false),
 })
 
 type SignInForm = z.infer<typeof signInForm>
@@ -40,19 +40,26 @@ export function SignIn() {
   const navigate = useNavigate()
   const auth = useAuth()
 
-  console.log(localStorage.getItem("task-manager-v1:remember-me"));
+  console.log(localStorage.getItem('task-manager-v1:remember-me'))
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
     setValue,
-    getValues
+    getValues,
   } = useForm<SignInForm>({
     defaultValues: {
-      email: searchParms.get('email') ?? localStorage.getItem("task-manager-v1:user-email") ?? '',
-      password: searchParms.get('email') ? '' : localStorage.getItem("task-manager-v1:user-password") ?? '',
-      rememberMe: searchParms.get('email') ? false : localStorage.getItem("task-manager-v1:remember-me") === 'true',
+      email:
+        searchParms.get('email') ??
+        localStorage.getItem('task-manager-v1:user-email') ??
+        '',
+      password: searchParms.get('email')
+        ? ''
+        : localStorage.getItem('task-manager-v1:user-password') ?? '',
+      rememberMe: searchParms.get('email')
+        ? false
+        : localStorage.getItem('task-manager-v1:remember-me') === 'true',
     },
   })
 
@@ -66,14 +73,17 @@ export function SignIn() {
     try {
       await authenticate({ email, password })
 
-      localStorage.setItem("task-manager-v1:remember-me", rememberMe ? 'true' : 'false');
+      localStorage.setItem(
+        'task-manager-v1:remember-me',
+        rememberMe ? 'true' : 'false',
+      )
 
       if (rememberMe) {
-        localStorage.setItem("task-manager-v1:user-email", email);
-        localStorage.setItem("task-manager-v1:user-password", password);
+        localStorage.setItem('task-manager-v1:user-email', email)
+        localStorage.setItem('task-manager-v1:user-password', password)
       } else {
-        localStorage.removeItem("task-manager-v1:user-email");
-        localStorage.removeItem("task-manager-v1:user-password");
+        localStorage.removeItem('task-manager-v1:user-email')
+        localStorage.removeItem('task-manager-v1:user-password')
       }
 
       navigate('/tasks')
@@ -81,8 +91,6 @@ export function SignIn() {
       toast.error(convertErrorToString(error))
     }
   }
-
-  const isChecked = getValues().rememberMe;
 
   return (
     <>
@@ -117,10 +125,11 @@ export function SignIn() {
                 <Checkbox
                   className="w-6 h-6"
                   id="rememberMe"
-                  checked={isChecked}
-                  onCheckedChange={checked => {
-                    setValue("rememberMe", checked ? true : false)
-                  }} />
+                  defaultChecked={getValues('rememberMe')}
+                  onCheckedChange={(checked: boolean) => {
+                    setValue('rememberMe', checked)
+                  }}
+                />
                 <Label htmlFor="rememberMe">Lembre-me</Label>
               </div>
             </div>
