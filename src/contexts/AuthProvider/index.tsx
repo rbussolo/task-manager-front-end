@@ -1,67 +1,51 @@
-import { jwtDecode } from "jwt-decode";
-import { createContext, useMemo } from 'react';
-import { IAuthProvider, IContext, IUser, IRequestError, IRequestLogin, AccessTokenDecoded } from './types';
-import { getUserLocalStorage, setUserLocalStorage } from './util';
-import { useNavigate } from 'react-router-dom';
-import { api } from '../../services/api';
+import { createContext, useMemo } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-const AuthContext = createContext<IContext>({} as IContext);
+import { api } from '../../lib/api'
+import { IAuthProvider, IContext, IRequestError, IRequestLogin } from './types'
+import { getUserLocalStorage } from './util'
+
+const AuthContext = createContext<IContext>({} as IContext)
 
 const AuthProvider = ({ children }: IAuthProvider) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  async function authenticate(login: string, password: string): Promise<IRequestError | IRequestLogin> {
-    if (login === "") 
-      return { message: "É necessário informar o E-mail do Usuário!" };
-
-    if (password === "")
-      return { message: "É necessário informar a Senha do Usuário!" };
+  async function authenticate(
+    email: string,
+    password: string,
+  ): Promise<IRequestError | IRequestLogin> {
+    if (!email || !password) {
+      throw new Error('É necessário informar o E-mail e a Senha!')
+    }
 
     return new Promise((resolve, reject) => {
-      api.post('auth/login', { 
-        login, 
-        password 
-      }).then(response => {
-        const result = response.data as IRequestLogin;
-        const jwt_access = jwtDecode(result.access_token) as AccessTokenDecoded;
+      api
+        .post('auth/login', {
+          email,
+          password,
+        })
+        .then((response) => {
+          const result = response.data as IRequestLogin
 
-        const payload: IUser = {
-          user: {
-            id: jwt_access.sub,
-            login: jwt_access.login
-          },
-          access_token: result.access_token,
-          refresh_token: result.refresh_token
-        }
-
-        setUserLocalStorage(payload);
-
-        resolve(result);
-      }).catch(err => {
-        reject(err);
-      })
-    });
+          resolve(result)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 
   function logout() {
-    setUserLocalStorage(null);
-    navigate("/login");
+    navigate('/sign-in')
   }
 
   function getCurrentUser() {
-    return getUserLocalStorage();
+    return getUserLocalStorage()
   }
 
-  const value = useMemo(
-    () => ({ authenticate, logout, getCurrentUser }),
-    []
-  );
+  const value = useMemo(() => ({ authenticate, logout, getCurrentUser }), [])
 
-  return (
-    <AuthContext.Provider value={value}>
-      { children }
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-export { AuthContext, AuthProvider };
+export { AuthContext, AuthProvider }

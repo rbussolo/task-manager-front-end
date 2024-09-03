@@ -1,17 +1,17 @@
-import { Box, CircularProgress, Modal } from "@mui/material";
+import { Box, CircularProgress, Modal } from '@mui/material'
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
-  transform: 'translate(-50%, -50%)'
-};
-
-interface LoadingProps {
-  isLoading: boolean;
+  transform: 'translate(-50%, -50%)',
 }
 
-export default function Loading({ isLoading }: LoadingProps) {
+interface LoadingProps {
+  isLoading: boolean
+}
+
+export function Loading({ isLoading }: LoadingProps) {
   return (
     <Modal
       open={isLoading}

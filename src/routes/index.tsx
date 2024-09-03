@@ -1,64 +1,29 @@
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthProvider/useAuth';
-import { Login } from '../pages/Login';
-import { Task } from '../pages/Task';
-import { Template } from '../components/Template';
+import { Route, Routes } from 'react-router-dom'
 
-const LoginLayout = () => {
-  const user = useAuth().getCurrentUser();
-
-  if (user) {
-    return <Navigate to="/tasks" replace />;
-  }
-
-  return (
-    <>
-      <Outlet />
-    </>
-  )
-}
-
-const ProtectedRoute = () => {
-  const user = useAuth().getCurrentUser();
-
-  if (!user) {
-    return <Navigate to="/" replace={true} />;
-  }
-
-  return (
-    <>
-      <Template>
-        <Outlet />
-      </Template>
-    </>
-  )
-};
+import { AppLayout } from '@/pages/_layout/app'
+import { AuthLayout } from '@/pages/_layout/auth'
+import { GroupAdd } from '@/pages/app/group/group-add'
+import { Tasks } from '@/pages/app/tasks/tasks'
+import { SignIn } from '@/pages/auth/sign-in'
+import { SignUp } from '@/pages/auth/sign-up'
 
 const RoutesApp = () => {
-  const user = useAuth().getCurrentUser();
-
   return (
     <>
       <Routes>
-        <Route element={<LoginLayout />}>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
+        <Route element={<AuthLayout />}>
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/" element={<SignIn />} />
         </Route>
 
-        <Route element={<ProtectedRoute />}>
-          <Route path="/tasks" element={<Task />} />
+        <Route element={<AppLayout />}>
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/group/add" element={<GroupAdd />} />
         </Route>
-
-        <Route path="*" element={user ? (
-          <Template>
-            <Task />
-          </Template>
-        ) : (
-          <Login />
-        )} />
       </Routes>
     </>
   )
 }
 
-export { RoutesApp };
+export { RoutesApp }
