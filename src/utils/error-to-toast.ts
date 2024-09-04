@@ -1,8 +1,6 @@
 import { AxiosError } from 'axios'
 
 export function convertErrorToString(error: unknown): string {
-  console.log(error)
-
   if (typeof error === 'string') {
     return error
   }

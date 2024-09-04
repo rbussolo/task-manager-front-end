@@ -2,8 +2,6 @@ import axios from 'axios'
 
 import { env } from '@/env'
 
-// import { getUserLocalStorage } from '../contexts/AuthProvider/util'
-
 export const api = axios.create({
   baseURL: env.VITE_APP_URL,
   withCredentials: true,

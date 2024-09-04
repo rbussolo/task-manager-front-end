@@ -5,12 +5,9 @@ export interface RegisterGroupBody {
   icon: string
 }
 
-export async function registerGroup({
-  name,
-  icon
-}: RegisterGroupBody) {
-  await api.post('/group', {
+export async function registerGroup({ name, icon }: RegisterGroupBody) {
+  await api.post('/groups', {
     name,
-    icon
+    icon,
   })
 }

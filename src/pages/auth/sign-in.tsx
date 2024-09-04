@@ -40,8 +40,6 @@ export function SignIn() {
   const navigate = useNavigate()
   const auth = useAuth()
 
-  console.log(localStorage.getItem('task-manager-v1:remember-me'))
-
   const {
     register,
     handleSubmit,

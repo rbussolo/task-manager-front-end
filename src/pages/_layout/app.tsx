@@ -16,9 +16,11 @@ export function AppLayout() {
           const status = error.response?.status
 
           if (status === 401) {
-            navigate('/sign-in', { replace: true })
+            return navigate('/sign-in', { replace: true })
           }
         }
+
+        return Promise.reject(error)
       },
     )
 

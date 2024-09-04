@@ -1,6 +1,19 @@
+import { useMutation } from '@tanstack/react-query'
+import { Helmet } from 'react-helmet-async'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { registerGroup } from '@/api/register-group'
+import Apple from '@/assets/apple.svg'
+import BadgeDollar from '@/assets/badge-dollar-sign.svg'
+import Briefcase from '@/assets/briefcase.svg'
+import Calendar from '@/assets/calendar.svg'
+import Taxi from '@/assets/car-taxi-front.svg'
+import Home from '@/assets/home.svg'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
 import {
   Select,
   SelectContent,
@@ -9,68 +22,54 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-
-import Apple from '@/assets/apple.svg'
-import BadgeDollar from '@/assets/badge-dollar-sign.svg'
-import Briefcase from '@/assets/briefcase.svg'
-import Calendar from '@/assets/calendar.svg'
-import Taxi from '@/assets/car-taxi-front.svg'
-import Home from '@/assets/home.svg'
-import { Helmet } from 'react-helmet-async'
-import { Button } from '@/components/ui/button'
-import { z } from 'zod'
-import { useMutation } from '@tanstack/react-query'
-import { useForm } from 'react-hook-form'
-import { registerGroup } from '@/api/register-group'
-import { toast } from 'sonner'
+} from '@/components/ui/select'
 import { convertErrorToString } from '@/utils/error-to-toast'
 
 type IconSelect = {
-  url: string,
+  url: string
   description: string
 }
 
 let icons: IconSelect[] = [
   {
     url: Apple,
-    description: "Comida"
+    description: 'Comida',
   },
   {
     url: BadgeDollar,
-    description: "Dinheiro"
+    description: 'Dinheiro',
   },
   {
     url: Calendar,
-    description: "Calendario"
+    description: 'Calendario',
   },
   {
     url: Home,
-    description: "Casa"
+    description: 'Casa',
   },
   {
     url: Briefcase,
-    description: "Trabalho"
+    description: 'Trabalho',
   },
   {
     url: Taxi,
-    description: "Transporte"
+    description: 'Transporte',
   },
 ]
 
 icons = icons.sort((a, b) => {
   if (a.description > b.description) {
-    return 1;
+    return 1
   } else if (a.description < b.description) {
-    return -1;
+    return -1
   }
 
-  return 0;
+  return 0
 })
 
 const groupForm = z.object({
   name: z.string(),
-  icon: z.string()
+  icon: z.string(),
 })
 
 type GroupForm = z.infer<typeof groupForm>
@@ -80,19 +79,23 @@ export function GroupAdd() {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<GroupForm>()
+    setValue,
+  } = useForm<GroupForm>({
+    defaultValues: {
+      name: '',
+      icon: '',
+    },
+  })
 
   const { mutateAsync: registerGroupFn } = useMutation({
     mutationFn: registerGroup,
   })
 
   async function handleNewGroup(data: GroupForm) {
-    console.log(data)
-
     try {
       await registerGroupFn({
         name: data.name,
-        icon: data.icon
+        icon: data.icon,
       })
 
       toast.success('Grupo criado com sucesso!')
@@ -115,19 +118,23 @@ export function GroupAdd() {
             <div className="flex flex-col border border-slate-200 p-6 gap-4">
               <div className="flex flex-row gap-4">
                 <div>
-                  <Label htmlFor="iconUrl">Icone do grupo</Label>
+                  <Label htmlFor="iconUrl">Icone do grupo:</Label>
 
-                  <Select>
+                  <Select onValueChange={(value) => setValue('icon', value)}>
                     <SelectTrigger className="w-[250px]">
                       <SelectValue placeholder="Selecione um icone" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectLabel>Icones diponíveis</SelectLabel>
+                        <SelectLabel>Icones diponíveis:</SelectLabel>
 
                         {icons.map((icon) => {
                           return (
-                            <SelectItem key={icon.description} value={icon.url} {...register('icon')}>
+                            <SelectItem
+                              key={icon.description}
+                              value={icon.url}
+                              {...register('icon')}
+                            >
                               <div className="flex flex-row align-middle gap-2">
                                 <img src={icon.url} /> {icon.description}
                               </div>
@@ -141,7 +148,12 @@ export function GroupAdd() {
 
                 <div className="flex-grow">
                   <Label htmlFor="name">Nome do grupo</Label>
-                  <Input id="name" type="text" className="w-full" {...register('name')} />
+                  <Input
+                    id="name"
+                    type="text"
+                    className="w-full"
+                    {...register('name')}
+                  />
                 </div>
               </div>
 
