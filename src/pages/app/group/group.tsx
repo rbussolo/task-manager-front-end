@@ -1,9 +1,11 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { getGroupById } from '@/api/get-group-by-id'
 import { registerGroup } from '@/api/register-group'
 import Apple from '@/assets/apple.svg'
 import BadgeDollar from '@/assets/badge-dollar-sign.svg'
@@ -74,8 +76,12 @@ const groupForm = z.object({
 
 type GroupForm = z.infer<typeof groupForm>
 
-export function GroupAdd() {
+export function Group() {
+  const { id } = useParams()
+  const groupId = id && parseInt(id) > 0 ? parseInt(id) : 0
+
   const {
+    watch,
     register,
     handleSubmit,
     formState: { isSubmitting },
@@ -87,6 +93,19 @@ export function GroupAdd() {
     },
   })
 
+  const { isLoading } = useQuery({
+    queryKey: ['group', id],
+    queryFn: async () => {
+      const data = await getGroupById(groupId)
+
+      setValue('name', data.name)
+      setValue('icon', data.icon)
+
+      return data
+    },
+    enabled: groupId > 0,
+  })
+
   const { mutateAsync: registerGroupFn } = useMutation({
     mutationFn: registerGroup,
   })
@@ -94,6 +113,7 @@ export function GroupAdd() {
   async function handleNewGroup(data: GroupForm) {
     try {
       await registerGroupFn({
+        id: groupId,
         name: data.name,
         icon: data.icon,
       })
@@ -103,6 +123,8 @@ export function GroupAdd() {
       toast.error(convertErrorToString(error))
     }
   }
+
+  const icon = watch('icon')
 
   return (
     <>
@@ -120,7 +142,13 @@ export function GroupAdd() {
                 <div>
                   <Label htmlFor="iconUrl">Icone do grupo:</Label>
 
-                  <Select onValueChange={(value) => setValue('icon', value)}>
+                  <Select
+                    value={icon}
+                    onValueChange={(value) => {
+                      setValue('icon', value)
+                    }}
+                    disabled={isLoading}
+                  >
                     <SelectTrigger className="w-[250px]">
                       <SelectValue placeholder="Selecione um icone" />
                     </SelectTrigger>
@@ -130,11 +158,7 @@ export function GroupAdd() {
 
                         {icons.map((icon) => {
                           return (
-                            <SelectItem
-                              key={icon.description}
-                              value={icon.url}
-                              {...register('icon')}
-                            >
+                            <SelectItem key={icon.description} value={icon.url}>
                               <div className="flex flex-row align-middle gap-2">
                                 <img src={icon.url} /> {icon.description}
                               </div>
@@ -153,12 +177,13 @@ export function GroupAdd() {
                     type="text"
                     className="w-full"
                     {...register('name')}
+                    disabled={isLoading}
                   />
                 </div>
               </div>
 
               <div className="flex flex-row gap-4">
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="submit" disabled={isSubmitting || isLoading}>
                   Cadastrar
                 </Button>
               </div>

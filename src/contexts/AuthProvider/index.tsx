@@ -43,7 +43,25 @@ const AuthProvider = ({ children }: IAuthProvider) => {
     return getUserLocalStorage()
   }
 
-  const value = useMemo(() => ({ authenticate, logout, getCurrentUser }), [])
+  async function reauthenticate(): Promise<IRequestError | IRequestLogin> {
+    return new Promise((resolve, reject) => {
+      api
+        .post('/auth/refresh')
+        .then((response) => {
+          const result = response.data as IRequestLogin
+
+          resolve(result)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
+  const value = useMemo(
+    () => ({ authenticate, logout, getCurrentUser, reauthenticate }),
+    [],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

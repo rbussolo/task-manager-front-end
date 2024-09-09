@@ -39,5 +39,6 @@ export interface IContext {
     email: string,
     password: string,
   ) => Promise<IRequestError | IRequestLogin>
+  reauthenticate: () => Promise<IRequestError | IRequestLogin>
   logout: () => void
 }

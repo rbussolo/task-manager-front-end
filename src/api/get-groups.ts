@@ -4,6 +4,8 @@ export interface IGroup {
   id: number
   name: string
   icon: string
+  slug: string
+  amount: number
 }
 
 export async function getGroups() {
