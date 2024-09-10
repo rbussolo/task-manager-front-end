@@ -5,14 +5,14 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { getProfile } from '@/api/get-profile'
+import { updateUser } from '@/api/update-user'
+import { updateUserPhoto } from '@/api/update-user-photo'
 import logo from '@/assets/user_no_image.png'
+import { convertErrorToString } from '@/utils/error-to-toast'
 
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
-import { updateUser } from '@/api/update-user'
-import { convertErrorToString } from '@/utils/error-to-toast'
-import { updateUserPhoto } from '@/api/update-user-photo'
 
 const userProfileForm = z.object({
   name: z.string(),
@@ -91,7 +91,7 @@ export function UserProfile() {
 
     try {
       await updateUserPhotoFn({
-        file
+        file,
       })
 
       toast.success('Foto atualizada com sucesso!')

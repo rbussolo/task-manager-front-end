@@ -5,8 +5,10 @@ export interface UpdateUserPhotoBody {
 }
 
 export async function updateUserPhoto({ file }: UpdateUserPhotoBody) {
-  const formData = new FormData();
-  formData.append('file', file);
+  const formData = new FormData()
+  formData.append('file', file)
 
-  await api.patchForm('/users/photo', formData)
+  await api.patchForm('/users/photo', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
 }
