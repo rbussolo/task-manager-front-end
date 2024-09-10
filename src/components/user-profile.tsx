@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { getProfile } from '@/api/get-profile'
@@ -32,6 +33,8 @@ export function UserProfile() {
     handleSubmit,
     reset,
     formState: { isSubmitting },
+    setValue,
+    watch,
   } = useForm<UserProfileForm>()
 
   function handleEdit(data: UserProfileForm) {
@@ -47,12 +50,31 @@ export function UserProfile() {
   }, [user, reset])
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    console.log(e.target.files)
+    if (!e.target.files) return
+
+    const file = e.target.files[0]
+
+    if (file.type !== 'image/png') {
+      toast.error('Arquivo selecionado deve ser uma imagem PNG.')
+
+      return
+    } else if (file.size > 1024 * 512) {
+      toast.error('O arquivo não pode ter tamanho maior que 512KB.')
+
+      return
+    }
+
+    const userImage = URL.createObjectURL(file)
+
+    setValue('userImage', userImage)
+    setValue('file', file)
   }
 
   function handleChangeFile() {
     inputFileRef.current?.click()
   }
+
+  const image = watch('userImage') ?? logo
 
   return (
     <>
@@ -85,7 +107,7 @@ export function UserProfile() {
           </div>
           <div className="flex flex-col gap-2 items-center">
             <img
-              src={logo}
+              src={image}
               alt="user"
               className="rounded-full w-[148px] h-[148px] border bg-white"
             />
