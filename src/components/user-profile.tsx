@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -10,6 +10,9 @@ import logo from '@/assets/user_no_image.png'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Label } from './ui/label'
+import { updateUser } from '@/api/update-user'
+import { convertErrorToString } from '@/utils/error-to-toast'
+import { updateUserPhoto } from '@/api/update-user-photo'
 
 const userProfileForm = z.object({
   name: z.string(),
@@ -28,6 +31,14 @@ export function UserProfile() {
     queryFn: getProfile,
   })
 
+  const { mutateAsync: updateUserFn } = useMutation({
+    mutationFn: updateUser,
+  })
+
+  const { mutateAsync: updateUserPhotoFn } = useMutation({
+    mutationFn: updateUserPhoto,
+  })
+
   const {
     register,
     handleSubmit,
@@ -37,8 +48,17 @@ export function UserProfile() {
     watch,
   } = useForm<UserProfileForm>()
 
-  function handleEdit(data: UserProfileForm) {
-    console.log(data)
+  async function handleEdit(data: UserProfileForm) {
+    try {
+      await updateUserFn({
+        name: data.name,
+        email: data.email,
+      })
+
+      toast.success('Dados atualizados com sucesso!')
+    } catch (error) {
+      toast.error(convertErrorToString(error))
+    }
   }
 
   useEffect(() => {
@@ -49,7 +69,7 @@ export function UserProfile() {
     })
   }, [user, reset])
 
-  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return
 
     const file = e.target.files[0]
@@ -68,6 +88,16 @@ export function UserProfile() {
 
     setValue('userImage', userImage)
     setValue('file', file)
+
+    try {
+      await updateUserPhotoFn({
+        file
+      })
+
+      toast.success('Foto atualizada com sucesso!')
+    } catch (error) {
+      toast.error(convertErrorToString(error))
+    }
   }
 
   function handleChangeFile() {
