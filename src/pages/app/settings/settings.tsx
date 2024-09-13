@@ -3,6 +3,8 @@ import { Helmet } from 'react-helmet-async'
 import { UserPassword } from '@/components/user-password'
 import { UserProfile } from '@/components/user-profile'
 
+import { Groups } from '../group/groups'
+
 export function Settings() {
   return (
     <>
@@ -18,6 +20,7 @@ export function Settings() {
             <UserProfile />
             <UserPassword />
           </div>
+          <Groups />
         </div>
       </div>
     </>

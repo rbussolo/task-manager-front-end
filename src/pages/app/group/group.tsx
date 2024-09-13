@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -6,7 +6,9 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 
 import { getGroupById } from '@/api/get-group-by-id'
+import { IGroup } from '@/api/get-groups'
 import { registerGroup } from '@/api/register-group'
+import { updateGroup } from '@/api/update-group'
 import Apple from '@/assets/apple.svg'
 import BadgeDollar from '@/assets/badge-dollar-sign.svg'
 import Briefcase from '@/assets/briefcase.svg'
@@ -76,14 +78,22 @@ const groupForm = z.object({
 
 type GroupForm = z.infer<typeof groupForm>
 
+interface RequestGroupBody {
+  id?: number
+  name: string
+  icon: string
+}
+
 export function Group() {
   const { id } = useParams()
   const groupId = id && parseInt(id) > 0 ? parseInt(id) : 0
+  const queryClient = useQueryClient()
 
   const {
     watch,
     register,
     handleSubmit,
+    reset,
     formState: { isSubmitting },
     setValue,
   } = useForm<GroupForm>({
@@ -98,8 +108,10 @@ export function Group() {
     queryFn: async () => {
       const data = await getGroupById(groupId)
 
-      setValue('name', data.name)
-      setValue('icon', data.icon)
+      reset({
+        name: data.name,
+        icon: data.icon,
+      })
 
       return data
     },
@@ -107,16 +119,46 @@ export function Group() {
   })
 
   const { mutateAsync: registerGroupFn } = useMutation({
-    mutationFn: registerGroup,
+    mutationFn: ({ id, name, icon }: RequestGroupBody) => {
+      if (id && id > 0) {
+        return updateGroup({ id, name, icon })
+      }
+
+      return registerGroup({ name, icon })
+    },
   })
+
+  function updateGroupsCache(group: IGroup) {
+    const cached = queryClient.getQueryData<IGroup[]>(['groups'])
+
+    if (!cached) return
+
+    if (groupId && groupId > 0) {
+      const newCached = cached.map((g) => {
+        if (g.id !== group.id) return g
+
+        return group
+      })
+
+      queryClient.setQueryData<IGroup[]>(['groups'], newCached)
+    } else {
+      const newCached = [...cached, group]
+
+      queryClient.setQueryData<IGroup[]>(['groups'], newCached)
+    }
+
+    return { cached }
+  }
 
   async function handleNewGroup(data: GroupForm) {
     try {
-      await registerGroupFn({
+      const group = await registerGroupFn({
         id: groupId,
         name: data.name,
         icon: data.icon,
       })
+
+      updateGroupsCache(group)
 
       toast.success('Grupo criado com sucesso!')
     } catch (error) {

@@ -1,21 +1,22 @@
 import { api } from '@/lib/api'
 
+import { IGroup } from './get-groups'
+
 export interface RegisterGroupBody {
-  id?: number
   name: string
   icon: string
 }
 
-export async function registerGroup({ id, name, icon }: RegisterGroupBody) {
-  if (id) {
-    await api.patch(`/groups/${id}`, {
-      name,
-      icon,
-    })
-  } else {
-    await api.post('/groups', {
-      name,
-      icon,
-    })
-  }
+export interface RegisterGroupResponse extends IGroup {}
+
+export async function registerGroup({
+  name,
+  icon,
+}: RegisterGroupBody): Promise<RegisterGroupResponse> {
+  const result = await api.post('/groups', {
+    name,
+    icon,
+  })
+
+  return result.data
 }
