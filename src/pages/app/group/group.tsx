@@ -202,7 +202,8 @@ export function Group() {
                           return (
                             <SelectItem key={icon.description} value={icon.url}>
                               <div className="flex flex-row align-middle gap-2">
-                                <img src={icon.url} /> {icon.description}
+                                <img src={icon.url} alt={icon.description} />{' '}
+                                {icon.description}
                               </div>
                             </SelectItem>
                           )
