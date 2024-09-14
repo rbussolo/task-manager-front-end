@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 
 import { AppLayout } from '@/pages/_layout/app'
 import { AuthLayout } from '@/pages/_layout/auth'
-import { Group } from '@/pages/app/group/group'
+import { Group } from '@/pages/app/groups/group'
 import { Settings } from '@/pages/app/settings/settings'
 import { Tasks } from '@/pages/app/tasks/tasks'
 import { SignIn } from '@/pages/auth/sign-in'

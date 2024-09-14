@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { UserPassword } from '@/components/user-password'
 import { UserProfile } from '@/components/user-profile'
 
-import { Groups } from '../group/groups'
+import { Groups } from '../groups/groups'
 
 export function Settings() {
   return (
