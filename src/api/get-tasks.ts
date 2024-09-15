@@ -9,11 +9,18 @@ export interface ITag {
 
 export interface ITask {
   id: number
+  title: string
   description: string
-  date: string | null
-  isDone: boolean
-  isImportant: boolean
-  tag?: ITag
+  priority: string
+  due_date: string | null
+  completed: boolean
+  important: boolean
+  create_at: string
+  group?: {
+    id: number
+    name: string
+    icon: string
+  }
 }
 
 export interface GetTasks {
