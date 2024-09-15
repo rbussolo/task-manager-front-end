@@ -3,6 +3,7 @@ import { ptBR } from 'date-fns/locale'
 import { Dot, Star } from 'lucide-react'
 
 import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
 
 export interface TaskProps {
   id: number
@@ -10,7 +11,7 @@ export interface TaskProps {
   description: string
   priority: string
   due_date: string | null
-  create_at: string
+  created_at: string
   completed: boolean
   important: boolean
   group?: {
@@ -25,8 +26,6 @@ interface TasksListItemProps {
 }
 
 export function TasksListItem({ task }: TasksListItemProps) {
-  console.log(task)
-
   return (
     <div className="flex items-center border border-slate-200 p-2 gap-4 min-h-[70px]">
       <Checkbox className="w-6 h-6" />
@@ -35,6 +34,24 @@ export function TasksListItem({ task }: TasksListItemProps) {
           {task.title}
         </span>
         <div className="flex items-center gap-2 text-sm">
+          <div className="flex gap-1">
+            <Badge variant="secondary">
+              {formatDistanceToNow(task.created_at, {
+                addSuffix: true,
+                locale: ptBR,
+              })}
+            </Badge>
+            {task.due_date && (
+              <Badge variant="outline">
+                {formatDistanceToNow(task.due_date, {
+                  addSuffix: true,
+                  locale: ptBR,
+                })}
+              </Badge>
+            )}
+          </div>
+
+
           {task.group?.icon && (
             <div className="flex items-center gap-1">
               <Dot />
@@ -42,17 +59,7 @@ export function TasksListItem({ task }: TasksListItemProps) {
               <span>{task.group.name}</span>
             </div>
           )}
-          {task.due_date && (
-            <div className="flex items-center gap-1">
-              <Dot />
-              <span>
-                {formatDistanceToNow(task.due_date, {
-                  addSuffix: true,
-                  locale: ptBR,
-                })}
-              </span>
-            </div>
-          )}
+
         </div>
       </div>
       <Star />

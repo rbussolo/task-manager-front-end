@@ -1,13 +1,6 @@
 import { api } from '@/lib/api'
 
-export interface ITag {
-  id: number
-  name: string
-  description: string
-  urlImage: string
-}
-
-export interface ITask {
+export interface Task {
   id: number
   title: string
   description: string
@@ -15,7 +8,7 @@ export interface ITask {
   due_date: string | null
   completed: boolean
   important: boolean
-  create_at: string
+  created_at: string
   group?: {
     id: number
     name: string
@@ -23,12 +16,10 @@ export interface ITask {
   }
 }
 
-export interface GetTasks {
-  tasks: ITask[]
-}
+export type GetTasksResponse = Task[]
 
 export async function getTasks() {
-  const response = await api.get<GetTasks>('/tasks')
+  const response = await api.get<GetTasksResponse>('/tasks')
 
   return response.data
 }

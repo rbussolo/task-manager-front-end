@@ -5,6 +5,7 @@ import { getTasks } from '@/api/get-tasks'
 import { Button } from '@/components/ui/button'
 
 import { TasksListItem } from './tasks-list-item'
+import { TasksListSkeleton } from './tasks-list-skeleton'
 
 export function Tasks() {
   const [searchParms] = useSearchParams()
@@ -12,7 +13,7 @@ export function Tasks() {
   const isImportant = searchParms.get('important') !== null
   const tagName = isImportant ? '#Importante' : ''
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['tasks'],
     queryFn: getTasks,
   })
@@ -31,8 +32,10 @@ export function Tasks() {
           </Link>
         </div>
 
-        {data?.tasks &&
-          data.tasks.map((task) => {
+        {isLoading && <TasksListSkeleton />}
+
+        {data &&
+          data.map((task) => {
             return <TasksListItem key={task.id} task={task} />
           })}
       </div>
