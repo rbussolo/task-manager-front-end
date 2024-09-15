@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { format } from "date-fns"
+
 import { registerTask } from '@/api/register-task'
 import { GroupListSelect } from '@/components/group-list-select'
 import { Button } from '@/components/ui/button'
@@ -28,15 +30,18 @@ import {
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { convertErrorToString } from '@/utils/error-to-toast'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+import { Calendar } from '@/components/ui/calendar'
+import { CalendarIcon } from 'lucide-react'
+import { ptBR } from 'date-fns/locale'
 
 const taskForm = z.object({
   title: z.string(),
   description: z.string(),
   priority: z.enum(['Baixa', 'Média', 'Alta']),
-  group_id: z.number(),
-  due_date: z.date({
-    required_error: 'É necessário informar o prazo!',
-  }),
+  group_id: z.number().optional(),
+  due_date: z.date().optional(),
 })
 
 type TaskForm = z.infer<typeof taskForm>
@@ -50,7 +55,9 @@ export function Task() {
     watch,
   } = useForm<TaskForm>({
     defaultValues: {
-      priority: 'Baixa',
+      title: '',
+      description: '',
+      priority: 'Baixa'
     },
   })
 
@@ -60,9 +67,13 @@ export function Task() {
 
   async function handleNewTask(data: TaskForm) {
     try {
+      if (!data.title) {
+        throw new Error('É necessário informar o Titulo!')
+      }
+      console.log(data)
       await registerTaskFn(data)
 
-      toast.success('Grupo criado com sucesso!')
+      toast.success('Tarefa criada com sucesso!')
     } catch (error) {
       toast.error(convertErrorToString(error))
     }
@@ -70,6 +81,7 @@ export function Task() {
 
   const priority = watch('priority')
   const groupId = watch('group_id')
+  const due_date = watch('due_date')
 
   return (
     <>
@@ -146,7 +158,28 @@ export function Task() {
 
                     <div className="w-full lg:w-[calc(50%-0.5rem)]">
                       <Label htmlFor="name">Prazo</Label>
-                      <Input id="title" type="text" {...register('due_date')} />
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !due_date && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {due_date ? format(due_date, "PPP", { locale: ptBR }) : <span>Selecione uma data</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={due_date}
+                            onSelect={(value) => setValue('due_date', value)}
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
                   </div>
 

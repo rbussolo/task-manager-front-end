@@ -12,8 +12,8 @@ import {
 import { Skeleton } from './ui/skeleton'
 
 interface GroupListSelectProps {
-  groupId: number
-  onChange: (id: number) => void
+  groupId: number | undefined
+  onChange: (id: number | undefined) => void
 }
 
 export function GroupListSelect({ groupId, onChange }: GroupListSelectProps) {
@@ -28,13 +28,17 @@ export function GroupListSelect({ groupId, onChange }: GroupListSelectProps) {
 
   const value = groupId ? groupId.toString() : '0'
 
+  function handleChangeValue(value: string) {
+    const v: number | undefined = parseInt(value) > 0 ? parseInt(value) : undefined;
+
+    onChange(v)
+  }
+
   return (
     <>
       <Select
         value={value}
-        onValueChange={(value) => {
-          onChange(parseInt(value))
-        }}
+        onValueChange={handleChangeValue}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Selecione um grupo" />

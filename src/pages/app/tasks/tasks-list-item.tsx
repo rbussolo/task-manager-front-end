@@ -25,6 +25,8 @@ interface TasksListItemProps {
 }
 
 export function TasksListItem({ task }: TasksListItemProps) {
+  console.log(task)
+
   return (
     <div className="flex items-center border border-slate-200 p-2 gap-4 min-h-[70px]">
       <Checkbox className="w-6 h-6" />

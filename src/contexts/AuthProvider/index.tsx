@@ -49,7 +49,6 @@ const AuthProvider = ({ children }: IAuthProvider) => {
         .post('/auth/refresh')
         .then((response) => {
           const result = response.data as IRequestLogin
-
           resolve(result)
         })
         .catch((err) => {
