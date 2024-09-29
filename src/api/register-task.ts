@@ -1,5 +1,7 @@
 import { api } from '@/lib/api'
 
+import { Task } from './get-tasks'
+
 export interface RegisterTaskBody {
   title: string
   description?: string
@@ -8,6 +10,10 @@ export interface RegisterTaskBody {
   group_id?: number | undefined
 }
 
+export type RegisterTaskResponse = Task
+
 export async function registerTask(task: RegisterTaskBody) {
-  await api.post('/tasks', task)
+  const response = await api.post<RegisterTaskResponse>('/tasks', task)
+
+  return response.data
 }

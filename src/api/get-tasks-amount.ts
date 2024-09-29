@@ -4,10 +4,8 @@ export interface GetTasksAmount {
   amount: number
   amountImportant: number
   amountPlanned: number
-  tags: {
-    id: number
-    name: string
-    urlIcon: string
+  groups: {
+    group_id: number
     amount: number
   }[]
 }

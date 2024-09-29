@@ -4,6 +4,7 @@ export interface IGroup {
   id: number
   name: string
   icon: string
+  color: string
   slug: string
   amount: number
 }

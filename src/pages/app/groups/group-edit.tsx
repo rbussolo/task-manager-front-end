@@ -28,6 +28,7 @@ interface GroupEditProps {
 const groupForm = z.object({
   name: z.string(),
   icon: z.string(),
+  color: z.string(),
 })
 
 type GroupForm = z.infer<typeof groupForm>
@@ -46,6 +47,7 @@ export function GroupEdit({ groupId, open, closeDialog }: GroupEditProps) {
     defaultValues: {
       name: '',
       icon: '',
+      color: '',
     },
   })
 
@@ -57,6 +59,7 @@ export function GroupEdit({ groupId, open, closeDialog }: GroupEditProps) {
       reset({
         name: group.name,
         icon: group.icon,
+        color: group.color,
       })
 
       return group
@@ -88,6 +91,7 @@ export function GroupEdit({ groupId, open, closeDialog }: GroupEditProps) {
         id: groupId,
         name: data.name,
         icon: data.icon,
+        color: data.color,
       })
 
       updateGroupsCache(group)
@@ -121,8 +125,19 @@ export function GroupEdit({ groupId, open, closeDialog }: GroupEditProps) {
             />
           </div>
 
-          <div className="flex-grow">
-            <Label htmlFor="name">Nome do grupo</Label>
+          <div>
+            <Label htmlFor="color">Cor:</Label>
+
+            <Input
+              id="color"
+              type="color"
+              className="w-full p-0 border-none"
+              {...register('color')}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="name">Nome do grupo:</Label>
             <Input
               id="name"
               type="text"

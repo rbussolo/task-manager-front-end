@@ -13,13 +13,30 @@ export interface Task {
     id: number
     name: string
     icon: string
+    color: string
   }
 }
 
 export type GetTasksResponse = Task[]
 
-export async function getTasks() {
-  const response = await api.get<GetTasksResponse>('/tasks')
+export interface GetTasksRequest {
+  isImportant?: boolean
+  isCompleted?: boolean
+  searchGroup?: string
+}
+
+export async function getTasks({
+  isCompleted,
+  isImportant,
+  searchGroup,
+}: GetTasksRequest) {
+  const response = await api.get<GetTasksResponse>('/tasks', {
+    params: {
+      completed: isCompleted,
+      important: isImportant,
+      group_slug: searchGroup,
+    },
+  })
 
   return response.data
 }

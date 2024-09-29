@@ -1,22 +1,82 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useSearchParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
-import { getTasks } from '@/api/get-tasks'
+import { completeTask } from '@/api/complete-task'
+import { deleteTask } from '@/api/delete-task'
+import { getTasks, Task } from '@/api/get-tasks'
 import { Button } from '@/components/ui/button'
+import { convertErrorToString } from '@/utils/error-to-toast'
 
 import { TasksListItem } from './tasks-list-item'
 import { TasksListSkeleton } from './tasks-list-skeleton'
 
 export function Tasks() {
   const [searchParms] = useSearchParams()
+  const queryClient = useQueryClient()
 
-  const isImportant = searchParms.get('important') !== null
+  const isCompleted = searchParms.get('completed') !== null || false
+  const isImportant = searchParms.get('important') !== null || undefined
+  const searchGroup = searchParms.get('group') || undefined
   const tagName = isImportant ? '#Importante' : ''
 
   const { data, isLoading } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: getTasks,
+    queryKey: ['tasks', isImportant, searchGroup],
+    queryFn: () => getTasks({ isCompleted, isImportant, searchGroup }),
   })
+
+  const { mutateAsync: completeTaskFn } = useMutation({
+    mutationFn: completeTask,
+  })
+
+  const { mutateAsync: deleteTaskFn } = useMutation({
+    mutationFn: deleteTask,
+  })
+
+  async function handleTaskFinished(id: number) {
+    try {
+      await completeTaskFn({ id })
+
+      updateCacheOfTasks(id)
+
+      toast.success('Tarefa concluída com sucesso!')
+    } catch (error) {
+      toast.error(convertErrorToString(error))
+    }
+  }
+
+  async function handleTaskDeleted(id: number) {
+    try {
+      await deleteTaskFn({ id })
+
+      updateCacheOfTasks(id)
+
+      toast.success('Tarefa removida com sucesso!')
+    } catch (error) {
+      toast.error(convertErrorToString(error))
+    }
+  }
+
+  function updateCacheOfTasks(id: number) {
+    const cached = queryClient.getQueryData<Task[]>([
+      'tasks',
+      isImportant,
+      searchGroup,
+    ])
+
+    if (!cached) return
+
+    const newCached = cached.map((task) => {
+      if (task.id !== id) return task
+
+      return { ...task, completed: true }
+    })
+
+    queryClient.setQueryData<Task[]>(
+      ['tasks', isImportant, searchGroup],
+      newCached,
+    )
+  }
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -36,7 +96,16 @@ export function Tasks() {
 
         {data &&
           data.map((task) => {
-            return <TasksListItem key={task.id} task={task} />
+            if (task.completed) return null
+
+            return (
+              <TasksListItem
+                key={task.id}
+                task={task}
+                onTaskFinished={handleTaskFinished}
+                onTaskRemoved={handleTaskDeleted}
+              />
+            )
           })}
       </div>
     </div>

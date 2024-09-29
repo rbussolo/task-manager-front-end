@@ -73,16 +73,27 @@ export function HeaderMenu({ expanded }: HeaderMenuProps) {
       {isLoadingGroups && <Skeleton className="w-full min-h-14" />}
 
       {groups &&
-        groups.map((group) => (
-          <HeaderMenuItem
-            key={group.id}
-            to={`/tasks?group=${group.slug}`}
-            description={group.name}
-            IconUrl={group.icon}
-            amount={group.amount}
-            expanded={expanded}
-          />
-        ))}
+        groups.map((group) => {
+          const groupAmount =
+            amountOfTasks &&
+            amountOfTasks?.groups.filter(
+              (groupAmount) => groupAmount.group_id === group.id,
+            )
+
+          const amount =
+            groupAmount && groupAmount.length > 0 ? groupAmount[0].amount : 0
+
+          return (
+            <HeaderMenuItem
+              key={group.id}
+              to={`/tasks?group=${group.slug}`}
+              description={group.name}
+              IconUrl={group.icon}
+              amount={amount}
+              expanded={expanded}
+            />
+          )
+        })}
 
       <HeaderMenuItem
         to="/group"

@@ -16,6 +16,7 @@ import { GroupSelectIcon } from './group-select-icon'
 const groupForm = z.object({
   name: z.string(),
   icon: z.string(),
+  color: z.string(),
 })
 
 type GroupForm = z.infer<typeof groupForm>
@@ -50,6 +51,7 @@ export function Group() {
       const group = await registerGroupFn({
         name: data.name,
         icon: data.icon,
+        color: data.color,
       })
 
       updateGroupsCache(group)
@@ -83,6 +85,17 @@ export function Group() {
                     onChange={(value) => {
                       setValue('icon', value)
                     }}
+                  />
+                </div>
+
+                <div className="w-[100px]">
+                  <Label htmlFor="color">Cor:</Label>
+
+                  <Input
+                    id="color"
+                    type="color"
+                    className="w-full p-0 border-none"
+                    {...register('color')}
                   />
                 </div>
 
