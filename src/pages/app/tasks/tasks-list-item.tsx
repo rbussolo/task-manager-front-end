@@ -65,7 +65,7 @@ export function TasksListItem({
             </div>
           </div>
         )}
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex flex-wrap items-center gap-2 text-sm">
           <div className="flex gap-1">
             <Badge variant="secondary">
               {formatDistanceToNow(task.created_at, {
@@ -74,7 +74,14 @@ export function TasksListItem({
               })}
             </Badge>
             {task.due_date && (
-              <Badge variant="outline">
+              <Badge
+                variant="outline"
+                className={
+                  new Date(task.due_date) < new Date()
+                    ? 'bg-red-200 hover:bg-red-400'
+                    : ''
+                }
+              >
                 {formatDistanceToNow(task.due_date, {
                   addSuffix: true,
                   locale: ptBR,
@@ -106,7 +113,7 @@ export function TasksListItem({
           )}
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 md:flex-row">
         <Button
           type="button"
           className="p-1 h-8 rounded-full"

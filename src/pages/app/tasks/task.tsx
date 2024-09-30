@@ -62,9 +62,11 @@ export function Task() {
 
       await registerTaskFn(data)
 
+      // Refetch query
+      queryClient.refetchQueries({ queryKey: ['tasks-amount'] })
+
       // Remove cache
       queryClient.removeQueries({ queryKey: ['tasks'] })
-      queryClient.removeQueries({ queryKey: ['tasks-amount'] })
 
       toast.success('Tarefa criada com sucesso!')
     } catch (error) {

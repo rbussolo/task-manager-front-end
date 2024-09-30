@@ -39,6 +39,9 @@ export function Tasks() {
 
       updateCacheOfTasks(id)
 
+      // Refetch query
+      queryClient.refetchQueries({ queryKey: ['tasks-amount'] })
+
       toast.success('Tarefa concluída com sucesso!')
     } catch (error) {
       toast.error(convertErrorToString(error))
@@ -50,6 +53,9 @@ export function Tasks() {
       await deleteTaskFn({ id })
 
       updateCacheOfTasks(id)
+
+      // Refetch query
+      queryClient.refetchQueries({ queryKey: ['tasks-amount'] })
 
       toast.success('Tarefa removida com sucesso!')
     } catch (error) {
@@ -80,12 +86,12 @@ export function Tasks() {
 
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="p-10 flex flex-col justify-center bg-slate-200 min-h-[150px]">
+      <div className="p-5 md:p-10 flex flex-col justify-center bg-slate-200 min-h-[150px]">
         <h3 className="text-3xl">Tarefas</h3>
         {tagName && <h4 className="text-sm">{tagName}</h4>}
       </div>
 
-      <div className="p-10 flex flex-col gap-2">
+      <div className="p-2 md:p-10 flex flex-col gap-2">
         <div className="flex justify-end">
           <Link to="/task">
             <Button>Nova Tarefa</Button>
