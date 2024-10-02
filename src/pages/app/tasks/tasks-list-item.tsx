@@ -51,7 +51,7 @@ export function TasksListItem({
                 <span>{task.description}</span>
               </div>
             )}
-            <div className="flex items-center text-sm gap-1">
+            <div className="flex flex-wrap items-center text-sm gap-1">
               <Badge variant="secondary">
                 {'Data de Criação: ' +
                   format(task.created_at, 'dd/MM/yyyy - HH:mm:ss')}
@@ -66,8 +66,8 @@ export function TasksListItem({
           </div>
         )}
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <div className="flex gap-1">
-            <Badge variant="secondary">
+          <div className="flex flex-wrap gap-1">
+            <Badge variant="secondary" className="hidden lg:block">
               {formatDistanceToNow(task.created_at, {
                 addSuffix: true,
                 locale: ptBR,

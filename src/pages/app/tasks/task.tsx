@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -7,6 +6,7 @@ import { z } from 'zod'
 
 import { registerTask } from '@/api/register-task'
 import { GroupListSelect } from '@/components/group-list-select'
+import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -78,91 +78,109 @@ export function Task() {
   const groupId = watch('group_id')
   const dueDate = watch('due_date')
 
+  function handleAddMinutes(minutes: number) {
+    const newDueDate = dueDate ? new Date(dueDate) : new Date()
+    newDueDate.setMinutes(newDueDate.getMinutes() + minutes)
+
+    setValue('due_date', newDueDate)
+  }
+
   return (
     <>
-      <Helmet title="Nova Tarefa" />
+      <PageContainer
+        title="Nova Tarefa"
+        pageTitle="Nova Tarefa"
+        description="Inclua uma nova tarefa o/"
+      >
+        <Card className="w-full lg:w-[816px]">
+          <CardHeader className="pb-2">
+            <CardTitle>Cadastro de Tarefas</CardTitle>
+            <CardDescription>Cadastre suas tarefas o/</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(handleNewTask)}>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-row gap-4 flex-wrap">
+                  <div className="w-full lg:w-[calc(100%-250px-1rem)]">
+                    <Label htmlFor="title">Titulo</Label>
+                    <Input id="title" type="text" {...register('title')} />
+                  </div>
 
-      <div className="flex flex-col w-full h-full">
-        <div className="p-10 flex flex-col justify-center bg-slate-200 min-h-[150px]">
-          <h3 className="text-3xl">Nova tarefa</h3>
-        </div>
+                  <div className="w-full lg:w-[250px]">
+                    <Label htmlFor="priority">Prioridade</Label>
 
-        <div className="p-10 flex justify-center">
-          <Card className="w-full lg:w-[816px]">
-            <CardHeader className="pb-2">
-              <CardTitle>Cadastro de Tarefas</CardTitle>
-              <CardDescription>Cadastre suas tarefas o/</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit(handleNewTask)}>
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-row gap-4 flex-wrap">
-                    <div className="w-full lg:w-[calc(100%-250px-1rem)]">
-                      <Label htmlFor="title">Titulo</Label>
-                      <Input id="title" type="text" {...register('title')} />
-                    </div>
+                    <TaskSelectPriority
+                      priority={priority}
+                      onPriorityChange={(value) => setValue('priority', value)}
+                    />
+                  </div>
 
-                    <div className="w-full lg:w-[250px]">
-                      <Label htmlFor="priority">Prioridade</Label>
+                  <div className="w-full">
+                    <Label htmlFor="description">Descrição</Label>
+                    <Textarea
+                      id="description"
+                      rows={5}
+                      {...register('description')}
+                    />
+                  </div>
 
-                      <TaskSelectPriority
-                        priority={priority}
-                        onPriorityChange={(value) =>
-                          setValue('priority', value)
-                        }
-                      />
-                    </div>
+                  <div className="w-full lg:w-[calc(50%-0.5rem)]">
+                    <Label htmlFor="name">Grupo</Label>
 
-                    <div className="w-full">
-                      <Label htmlFor="description">Descrição</Label>
-                      <Textarea
-                        id="description"
-                        rows={5}
-                        {...register('description')}
-                      />
-                    </div>
+                    <GroupListSelect
+                      groupId={groupId}
+                      onChange={(groupId) => {
+                        setValue('group_id', groupId)
+                      }}
+                    />
+                  </div>
 
-                    <div className="w-full lg:w-[calc(50%-0.5rem)]">
-                      <Label htmlFor="name">Grupo</Label>
+                  <div className="w-full lg:w-[calc(50%-0.5rem)]">
+                    <Label htmlFor="name">Prazo</Label>
 
-                      <GroupListSelect
-                        groupId={groupId}
-                        onChange={(groupId) => {
-                          setValue('group_id', groupId)
-                        }}
-                      />
-                    </div>
-
-                    <div className="w-full lg:w-[calc(50%-0.5rem)]">
-                      <Label htmlFor="name">Prazo</Label>
-
+                    <div className="flex gap-1">
                       <TaskCalendar
                         date={dueDate}
                         onDateChange={(value) => setValue('due_date', value)}
                       />
+
+                      <Button
+                        type="button"
+                        onClick={() => handleAddMinutes(30)}
+                        variant="outline"
+                      >
+                        +30m
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => handleAddMinutes(-15)}
+                        variant="secondary"
+                      >
+                        -15m
+                      </Button>
                     </div>
                   </div>
-
-                  <div className="flex flex-row gap-4 justify-center">
-                    <Button type="submit" disabled={isSubmitting}>
-                      Cadastrar
-                    </Button>
-                    <Link to="/tasks">
-                      <Button
-                        variant="outline"
-                        type="button"
-                        disabled={isSubmitting}
-                      >
-                        Voltar
-                      </Button>
-                    </Link>
-                  </div>
                 </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+
+                <div className="flex flex-row gap-4 justify-center">
+                  <Button type="submit" disabled={isSubmitting}>
+                    Cadastrar
+                  </Button>
+                  <Link to="/tasks">
+                    <Button
+                      variant="outline"
+                      type="button"
+                      disabled={isSubmitting}
+                    >
+                      Voltar
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </PageContainer>
     </>
   )
 }

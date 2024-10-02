@@ -1,6 +1,6 @@
 import { Skeleton } from '@mui/material'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Bolt, LogOut } from 'lucide-react'
+import { Bolt, BookCheck, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 import { getGroups } from '@/api/get-groups'
@@ -65,6 +65,12 @@ export function HeaderMenu({ expanded }: HeaderMenuProps) {
         description="Planejado"
         IconUrl={Calendar}
         amount={amountPlanned}
+        expanded={expanded}
+      />
+      <HeaderMenuItem
+        to="/tasks?completed"
+        description="Concluída"
+        IconUrl={BookCheck}
         expanded={expanded}
       />
 

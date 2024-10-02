@@ -4,8 +4,10 @@ import { toast } from 'sonner'
 
 import { completeTask } from '@/api/complete-task'
 import { deleteTask } from '@/api/delete-task'
-import { getTasks, Task } from '@/api/get-tasks'
+import { getTasks } from '@/api/get-tasks'
+import { PageContainer } from '@/components/page-container'
 import { Button } from '@/components/ui/button'
+import { generateKeyCacheToTasks } from '@/lib/react-query'
 import { convertErrorToString } from '@/utils/error-to-toast'
 
 import { TasksListItem } from './tasks-list-item'
@@ -21,7 +23,11 @@ export function Tasks() {
   const tagName = isImportant ? '#Importante' : ''
 
   const { data, isLoading } = useQuery({
-    queryKey: ['tasks', isImportant, searchGroup],
+    queryKey: generateKeyCacheToTasks({
+      important: isImportant,
+      completed: isCompleted,
+      group_slug: searchGroup,
+    }),
     queryFn: () => getTasks({ isCompleted, isImportant, searchGroup }),
   })
 
@@ -37,9 +43,8 @@ export function Tasks() {
     try {
       await completeTaskFn({ id })
 
-      updateCacheOfTasks(id)
-
       // Refetch query
+      queryClient.refetchQueries({ queryKey: ['tasks'] })
       queryClient.refetchQueries({ queryKey: ['tasks-amount'] })
 
       toast.success('Tarefa concluída com sucesso!')
@@ -52,9 +57,8 @@ export function Tasks() {
     try {
       await deleteTaskFn({ id })
 
-      updateCacheOfTasks(id)
-
       // Refetch query
+      queryClient.refetchQueries({ queryKey: ['tasks'] })
       queryClient.refetchQueries({ queryKey: ['tasks-amount'] })
 
       toast.success('Tarefa removida com sucesso!')
@@ -63,57 +67,27 @@ export function Tasks() {
     }
   }
 
-  function updateCacheOfTasks(id: number) {
-    const cached = queryClient.getQueryData<Task[]>([
-      'tasks',
-      isImportant,
-      searchGroup,
-    ])
-
-    if (!cached) return
-
-    const newCached = cached.map((task) => {
-      if (task.id !== id) return task
-
-      return { ...task, completed: true }
-    })
-
-    queryClient.setQueryData<Task[]>(
-      ['tasks', isImportant, searchGroup],
-      newCached,
-    )
-  }
-
   return (
-    <div className="flex flex-col w-full h-full">
-      <div className="p-5 md:p-10 flex flex-col justify-center bg-slate-200 min-h-[150px]">
-        <h3 className="text-3xl">Tarefas</h3>
-        {tagName && <h4 className="text-sm">{tagName}</h4>}
+    <PageContainer title="Tarefas" pageTitle="Tarefas" description={tagName}>
+      <div className="flex justify-end">
+        <Link to="/task">
+          <Button>Nova Tarefa</Button>
+        </Link>
       </div>
 
-      <div className="p-2 md:p-10 flex flex-col gap-2">
-        <div className="flex justify-end">
-          <Link to="/task">
-            <Button>Nova Tarefa</Button>
-          </Link>
-        </div>
+      {isLoading && <TasksListSkeleton />}
 
-        {isLoading && <TasksListSkeleton />}
-
-        {data &&
-          data.map((task) => {
-            if (task.completed) return null
-
-            return (
-              <TasksListItem
-                key={task.id}
-                task={task}
-                onTaskFinished={handleTaskFinished}
-                onTaskRemoved={handleTaskDeleted}
-              />
-            )
-          })}
-      </div>
-    </div>
+      {data &&
+        data.map((task) => {
+          return (
+            <TasksListItem
+              key={task.id}
+              task={task}
+              onTaskFinished={handleTaskFinished}
+              onTaskRemoved={handleTaskDeleted}
+            />
+          )
+        })}
+    </PageContainer>
   )
 }
