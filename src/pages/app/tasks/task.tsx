@@ -26,7 +26,7 @@ import { TaskSelectPriority } from './task-select-priority'
 const taskForm = z.object({
   title: z.string(),
   description: z.string(),
-  priority: z.enum(['Baixa', 'Média', 'Alta']),
+  priority: z.enum(['', 'Baixa', 'Média', 'Alta']),
   group_id: z.number().optional(),
   due_date: z.date().optional(),
 })

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { generateKeyCacheToTasks } from '@/lib/react-query'
 import { convertErrorToString } from '@/utils/error-to-toast'
 
+import { TasksFilters } from './tasks-filters'
 import { TasksListItem } from './tasks-list-item'
 import { TasksListSkeleton } from './tasks-list-skeleton'
 
@@ -73,6 +74,10 @@ export function Tasks() {
         <Link to="/task">
           <Button>Nova Tarefa</Button>
         </Link>
+      </div>
+
+      <div>
+        <TasksFilters />
       </div>
 
       {isLoading && <TasksListSkeleton />}
