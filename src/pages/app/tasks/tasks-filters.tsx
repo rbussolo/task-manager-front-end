@@ -7,6 +7,15 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 import { TaskSelectPriority } from './task-select-priority'
 
@@ -43,7 +52,7 @@ export function TasksFilters() {
 
   const title = searchParams.get('title')
   const priority: PriorityType = getPriority(searchParams.get('priority'))
-  const sort = searchParams.get('sort')
+  const sort = searchParams.get('sort') || ''
 
   const { handleSubmit, register, reset, setValue, watch } =
     useForm<TasksFiltersForm>({
@@ -96,6 +105,7 @@ export function TasksFilters() {
   }
 
   const prioritySelect = watch('priority')
+  const sortSelect = watch('sort')
 
   return (
     <form
@@ -121,6 +131,25 @@ export function TasksFilters() {
         allowEmptyValue={true}
         onPriorityChange={(value) => setValue('priority', value)}
       />
+
+      <Label htmlFor="sort" className="h-8 w-auto flex items-center">
+        Ordenar por:
+      </Label>
+      <Select
+        value={sortSelect}
+        onValueChange={(value) => setValue('sort', value)}
+      >
+        <SelectTrigger className="h-8 w-[150px]">
+          <SelectValue placeholder="Selecione" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            <SelectLabel>Selecione a ordem</SelectLabel>
+            <SelectItem value="priority">Prioridade</SelectItem>
+            <SelectItem value="dueDate">Data Limite</SelectItem>
+          </SelectGroup>
+        </SelectContent>
+      </Select>
 
       <Button type="submit" variant="secondary" size="xs">
         <Search className="mr-2 h-4 w-4" />

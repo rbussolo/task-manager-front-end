@@ -6,6 +6,9 @@ export interface GenerateKeyCacheToTasksProps {
   important?: boolean
   completed?: boolean
   group_slug?: string
+  title?: string
+  priority?: string
+  sort?: string
 }
 
 export type KeyCacheTasks = [string, GenerateKeyCacheToTasksProps]

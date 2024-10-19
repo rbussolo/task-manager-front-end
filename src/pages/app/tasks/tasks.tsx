@@ -15,21 +15,35 @@ import { TasksListItem } from './tasks-list-item'
 import { TasksListSkeleton } from './tasks-list-skeleton'
 
 export function Tasks() {
-  const [searchParms] = useSearchParams()
+  const [searchParams] = useSearchParams()
   const queryClient = useQueryClient()
 
-  const isCompleted = searchParms.get('completed') !== null || false
-  const isImportant = searchParms.get('important') !== null || undefined
-  const searchGroup = searchParms.get('group') || undefined
+  const isCompleted = searchParams.get('completed') !== null || false
+  const isImportant = searchParams.get('important') !== null || undefined
+  const searchGroup = searchParams.get('group') || undefined
   const tagName = isImportant ? '#Importante' : ''
+  const title = searchParams.get('title') || undefined
+  const priority = searchParams.get('priority') || undefined
+  const sort = searchParams.get('sort') || undefined
 
   const { data, isLoading } = useQuery({
     queryKey: generateKeyCacheToTasks({
       important: isImportant,
       completed: isCompleted,
       group_slug: searchGroup,
+      title,
+      priority,
+      sort,
     }),
-    queryFn: () => getTasks({ isCompleted, isImportant, searchGroup }),
+    queryFn: () =>
+      getTasks({
+        isCompleted,
+        isImportant,
+        searchGroup,
+        title,
+        priority,
+        sort,
+      }),
   })
 
   const { mutateAsync: completeTaskFn } = useMutation({

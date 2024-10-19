@@ -23,18 +23,27 @@ export interface GetTasksRequest {
   isImportant?: boolean
   isCompleted?: boolean
   searchGroup?: string
+  title?: string
+  priority?: string
+  sort?: string
 }
 
 export async function getTasks({
   isCompleted,
   isImportant,
   searchGroup,
+  title,
+  priority,
+  sort,
 }: GetTasksRequest) {
   const response = await api.get<GetTasksResponse>('/tasks', {
     params: {
       completed: isCompleted,
       important: isImportant,
       group_slug: searchGroup,
+      title,
+      priority,
+      order: sort,
     },
   })
 
