@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Pencil, X } from 'lucide-react'
+import { ArrowBigDown, ArrowBigUp, Pencil, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -14,9 +14,19 @@ import { GroupEdit } from './group-edit'
 
 interface GroupsTableRowProps {
   group: IGroup
+  showUp: boolean
+  showDown: boolean
+  changeToUp: (group: IGroup) => void
+  changeToDown: (group: IGroup) => void
 }
 
-export function GroupsTableRow({ group }: GroupsTableRowProps) {
+export function GroupsTableRow({
+  group,
+  showUp,
+  showDown,
+  changeToUp,
+  changeToDown,
+}: GroupsTableRowProps) {
   const [isOpenEditGroup, setOpenEditGroup] = useState(false)
   const queryClient = useQueryClient()
 
@@ -49,9 +59,27 @@ export function GroupsTableRow({ group }: GroupsTableRowProps) {
     <TableRow key={group.id}>
       <TableCell className="font-medium">{group.name}</TableCell>
       <TableCell className="flex gap-2">
+        <Button
+          disabled={!showUp}
+          onClick={() => changeToUp(group)}
+          variant="outline"
+          size="xs"
+        >
+          <ArrowBigUp className="text-primary fill-primary" />
+        </Button>
+
+        <Button
+          disabled={!showDown}
+          onClick={() => changeToDown(group)}
+          variant="outline"
+          size="xs"
+        >
+          <ArrowBigDown className="text-destructive fill-destructive" />
+        </Button>
+
         <Dialog open={isOpenEditGroup} onOpenChange={setOpenEditGroup}>
           <DialogTrigger asChild>
-            <Button variant="default">
+            <Button variant="default" size="xs">
               <Pencil className="h-3 w-3" />
             </Button>
           </DialogTrigger>
@@ -62,7 +90,11 @@ export function GroupsTableRow({ group }: GroupsTableRowProps) {
             closeDialog={() => setOpenEditGroup(false)}
           />
         </Dialog>
-        <Button variant="destructive" onClick={() => handleDelete(group.id)}>
+        <Button
+          variant="destructive"
+          size="xs"
+          onClick={() => handleDelete(group.id)}
+        >
           <X className="h-3 w-3" />
         </Button>
       </TableCell>

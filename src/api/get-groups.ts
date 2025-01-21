@@ -7,6 +7,7 @@ export interface IGroup {
   color: string
   slug: string
   amount: number
+  position: number
 }
 
 export async function getGroups() {

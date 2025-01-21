@@ -17,7 +17,7 @@ export async function updateGroup({
   icon,
   color,
 }: UpdateGroupBody): Promise<UpdateGroupResponse> {
-  const result = await api.patch<UpdateGroupResponse>(`/groups/${id}`, {
+  const result = await api.patch<UpdateGroupResponse>(`/groups/update/${id}`, {
     name,
     icon,
     color,
